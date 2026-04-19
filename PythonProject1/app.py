@@ -1,45 +1,31 @@
 import streamlit as st
-import yfinance as yf
-import plotly.graph_objects as go
-from config.settings import color_map
 
-st.subheader("📈 Stock Comparison Chart")
+from config.settings import STOCKS
+from auth.login import login
+from data.fetcher import get_stock_data
+from charts.graphs import show_chart
+from streamlit_autorefresh import st_autorefresh
 
-STOCKS = ["NVDA", "AAPL", "TSLA", "MSFT", "AMZN", "NQ=F"]
+st_autorefresh(interval=60000, key="refresh")
 
-selected = st.multiselect(
-    "Select up to 2 stocks",
-    STOCKS,
-    default=["NVDA"]
-)
+st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
-time_range = st.selectbox("Time Range", ["1d", "5d", "1mo", "3mo", "6mo"])
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
-@st.cache_data
-def load_data(ticker, time_range):
-    return yf.download(ticker, period=time_range, interval="1h")
 
-fig = go.Figure()
+if not st.session_state.logged_in:
+    login()
+    st.stop()
 
-for ticker in selected:
-    df = load_data(ticker, time_range)
+st.title("📊 Live Stock Dashboard")
 
-    fig.add_trace(
-        go.Scatter(
-            x=df.index,
-            y=df["Close"],
-            mode="lines",
-            name=ticker,
-            line=dict(color=color_map.get(ticker, "#ffffff"), width=3)
-        )
-    )
+stocks = st.multiselect("Select Stocks", STOCKS, default=STOCKS)
 
-fig.update_layout(
-    template="plotly_dark",
-    title="Stock Comparison (Max 2 Selected)",
-    xaxis_title="Time",
-    yaxis_title="Price (USD)",
-    legend_title="Selected Stocks"
-)
+placeholder = st.empty()
 
-st.plotly_chart(fig, use_container_width=True)
+df = get_stock_data(stocks)
+
+with placeholder.container():
+    st.dataframe(df)
+    show_chart(df)
