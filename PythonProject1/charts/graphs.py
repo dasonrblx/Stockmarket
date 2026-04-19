@@ -19,7 +19,7 @@ with col3:
 
 time_range = st.selectbox(
     "Time Range",
-    ["1d", "5d", "1mo", "3mo", "6mo"]
+    ["1d", "5d", "14d", "1mo", "3mo", "6mo"]
 )
 
 def show_chart(ticker):
@@ -37,7 +37,7 @@ for ticker in [t1, t2, t3]:
             y=df["Close"],
             mode="lines",
             name=f"{ticker} Stock",
-            line=dict(color=color_map.get(STOCKS))
+            line=dict(color= color_map.get(STOCKS))
         )
     )
 
