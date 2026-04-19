@@ -6,7 +6,7 @@ from data.fetcher import get_stock_data
 from charts.graphs import show_chart
 from streamlit_autorefresh import st_autorefresh
 
-st_autorefresh(interval=5000, key="refresh")
+st_autorefresh(interval=60000, key="refresh")
 
 st.set_page_config(page_title="Stock Dashboard", layout="wide")
 
