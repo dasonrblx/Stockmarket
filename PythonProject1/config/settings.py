@@ -1,0 +1,2 @@
+STOCKS = ["AAPL", "TSLA", "MSFT", "NQ=F"]
+REFRESH_RATE = 5
