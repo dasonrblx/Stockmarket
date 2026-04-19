@@ -3,6 +3,7 @@ import yfinance as yf
 import plotly.graph_objects as go
 
 from config.settings import STOCKS
+from config.settings import color_map
 
 st.subheader("📈 Multi-Stock Chart")
 
@@ -21,37 +22,21 @@ time_range = st.selectbox(
     ["1d", "5d", "1mo", "3mo", "6mo"]
 )
 
-emoji_map = {
-    "NVDA": "🟢",
-    "AAPL": "🍎",
-    "TSLA": "🚗",
-    "MSFT": "🪟",
-    "AMZN": "📦"
-}
-
-color_map = {
-    "NVDA": "#00ff88",
-    "AAPL": "#ff3b30",
-    "TSLA": "#ffcc00",
-    "MSFT": "#4da3ff",
-    "AMZN": "#ff9900"
-}
-
-def load_data(ticker):
+def show_chart(ticker):
     df = yf.download(ticker, period=time_range, interval="1h")
     return df
 
 fig = go.Figure()
 
 for ticker in [t1, t2, t3]:
-    df = load_data(ticker)
+    df = show_chart(ticker)
 
     fig.add_trace(
         go.Scatter(
             x=df.index,
             y=df["Close"],
             mode="lines",
-            name=f"{emoji_map.get(STOCKS,'📊')} {ticker}",
+            name=f"{ticker} Stock",
             line=dict(color=color_map.get(STOCKS))
         )
     )
